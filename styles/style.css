@@ -2,11 +2,11 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: url('../images/background.jpg') no-repeat center center fixed;
+    background: linear-gradient(rgba(247, 246, 246, 0.5), rgba(251, 249, 249, 0.5)), 
+              url('../images/background.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #fff;
   }
-  
   header {
     text-align: center;
     padding: 50px 20px;
@@ -62,4 +62,40 @@ body {
     text-align: center;
     padding: 20px;
     background: rgba(1, 134, 110, 0.8);
+  }
+
+  .body-home {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  h1, h2 {
+    color: #000000;
+  }
+  p {
+    margin-bottom: 20px;
+    color: #000000;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .photo-placeholder {
+    background-color: #e0e0e0;
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #555;
+    border-radius: 10px;
+    margin-bottom: 30px;
   }
