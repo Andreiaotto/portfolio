@@ -1,0 +1,76 @@
+{
+  "categories": {
+    "technology": {
+      "displayName": "Technology",
+      "articles": [
+        {
+          "id": "sre-basics",
+          "title": "Site Reliability Engineering (SRE)",
+          "filename": "sre-basics.html",
+          "description": "Introduction to SRE practices and principles"
+        }
+      ]
+    },
+    "finance": {
+      "displayName": "Finance",
+      "articles": [
+        {
+          "id": "financial-independence",
+          "title": "Finance Basics",
+          "filename": "financial-independence.html",
+          "description": "Building your path to financial freedom"
+        }
+      ]
+    },
+    "health": {
+      "displayName": "Women's Health",
+      "articles": [
+        {
+          "id": "health-fundamentals",
+          "title": "Health Fundamentals",
+          "filename": "health-fundamentals.html",
+          "description": "Essential principles for a healthy lifestyle"
+        },
+        {
+          "id": "nutrition-basics",
+          "title": "Nutrition Basics",
+          "filename": "nutrition-basics.html",
+          "description": "Understanding the fundamentals of proper nutrition"
+        }
+      ]
+    },
+    "living-abroad": {
+      "displayName": "Living Abroad",
+      "articles": [
+        {
+          "id": "expat-life",
+          "title": "Living Abroad",
+          "filename": "expat-life.html",
+          "description": "Navigating life as an expat"
+        }
+      ]
+    },
+    "dogs": {
+      "displayName": "Dogs",
+      "articles": [
+        {
+          "id": "dog-care",
+          "title": "Dogs",
+          "filename": "dog-care.html",
+          "description": "Tips for caring for your furry friends"
+        }
+      ]
+    },
+    "sailing": {
+      "displayName": "Sailing",
+      "articles": [
+        {
+          "id": "sailing-adventures",
+          "title": "Sailing",
+          "filename": "sailing-adventures.html",
+          "description": "Adventures on the water"
+        }
+      ]
+    }
+  }
+}
