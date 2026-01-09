@@ -11,6 +11,23 @@
         }
       ]
     },
+    "sports": {
+      "displayName": "Sports",
+      "articles": [
+        {
+          "id": "swimming-challenge",
+          "title": "Swimming Challenge",
+          "filename": "swimming-challenge.html",
+          "description": "Ultra Swim 33.3km in Greece, 2026"
+        },
+        {
+          "id": "sailing-adventures",
+          "title": "Sailing",
+          "filename": "sailing-adventures.html",
+          "description": "Adventures on the water"
+        }
+      ]
+    },
     "finance": {
       "displayName": "Finance",
       "articles": [
@@ -58,17 +75,6 @@
           "title": "Dogs",
           "filename": "dog-care.html",
           "description": "Tips for caring for your furry friends"
-        }
-      ]
-    },
-    "sailing": {
-      "displayName": "Sailing",
-      "articles": [
-        {
-          "id": "sailing-adventures",
-          "title": "Sailing",
-          "filename": "sailing-adventures.html",
-          "description": "Adventures on the water"
         }
       ]
     }
