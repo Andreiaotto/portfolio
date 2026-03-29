@@ -1,0 +1,60 @@
+name: Weekly Content Update
+
+on:
+  schedule:
+    # Every Monday at 7am UTC
+    - cron: '0 7 * * 1'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  fetch-and-draft:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install feedparser
+          pip install openai
+          pip install anthropic || true
+
+      - name: Fetch and generate content
+        run: python scripts/fetch_content.py
+        env:
+          # Choose one: GROQ_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_PROVIDER: ${{ secrets.AI_PROVIDER || 'groq' }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "Content update – ${{ env.WEEK_DATE }}"
+          body: |
+            🤖 **Automated Weekly Digest**
+
+            This PR contains auto-generated content summaries from trusted sources:
+            - SwimSwam (swimming news)
+            - NIH Women's Health (women's health research)
+            - Examine.com (nutrition science)
+            - BJSM (sports science)
+
+            **Review checklist:**
+            - [ ] Summaries are accurate and evidence-based
+            - [ ] Tone matches andreiaotto.com style
+            - [ ] Links are working
+            - [ ] No promotional content or hype
+
+            Merge to publish to the live site.
+          branch: content/auto-update-${{ github.run_id }}
+          labels: content, automated
+          delete-branch: true
+          commit-message: "Add weekly content digest for ${{ env.WEEK_DATE }}"
