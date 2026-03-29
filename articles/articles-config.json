@@ -4,6 +4,12 @@
       "displayName": "Technology",
       "articles": [
         {
+          "id": "technology-digest-2026-03-29",
+          "title": "SRE & Technology Digest \u2014 2026-03-29",
+          "filename": "technology-digest-2026-03-29.html",
+          "description": "Site Reliability Engineering practices, DevOps insights, and technical learnings"
+        },
+        {
           "id": "sre-basics",
           "title": "Site Reliability Engineering (SRE)",
           "filename": "sre-basics.html",
@@ -14,6 +20,12 @@
     "sports": {
       "displayName": "Sports",
       "articles": [
+        {
+          "id": "sports-digest-2026-03-29",
+          "title": "Open Water Swimming & Sports Science Digest \u2014 2026-03-29",
+          "filename": "sports-digest-2026-03-29.html",
+          "description": "Latest insights on open water swimming, endurance training, and sports science research"
+        },
         {
           "id": "swimming-challenge",
           "title": "Swimming Challenge",
@@ -42,6 +54,12 @@
     "health": {
       "displayName": "Women's Health",
       "articles": [
+        {
+          "id": "health-digest-2026-03-29",
+          "title": "Women's Health & Nutrition Digest \u2014 2026-03-29",
+          "filename": "health-digest-2026-03-29.html",
+          "description": "Evidence-based research on women's health and nutrition for athletes"
+        },
         {
           "id": "health-fundamentals",
           "title": "Health Fundamentals",
