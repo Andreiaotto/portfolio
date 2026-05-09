@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UltraSwim 33.3 Training Calendar | Andreia Otto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    /* ── Calendar page overrides ── */
+    .cal-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    .cal-hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .cal-hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin: 0 0 6px;
+      color: #2c3e50;
+    }
+    .cal-hero p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      color: #5a7a5a;
+      margin: 0;
+    }
+
+    /* ── Race countdown banner ── */
+    #countdown-banner {
+      background: rgba(108, 187, 132, 0.2);
+      border: 1px solid rgba(108, 187, 132, 0.5);
+      border-radius: 8px;
+      text-align: center;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    #countdown-banner .cd-label { font-size: 0.75rem; color: #5a7a5a; text-transform: uppercase; letter-spacing: 1px; }
+    #countdown-banner .cd-number { font-size: 2rem; font-weight: 600; color: #2c7a4b; line-height: 1.1; }
+    #countdown-banner .cd-stages { font-size: 0.8rem; color: #5a7a5a; margin-top: 6px; }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: #4a4a4a;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ── Block progress tabs ── */
+    .block-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .block-tab {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #4a4a4a;
+    }
+    .block-tab.active, .block-tab:hover {
+      background: rgba(108, 187, 132, 0.85);
+      border-color: transparent;
+      color: #fff;
+    }
+    .block-tab.all { background: rgba(108, 187, 132, 0.85); border-color: transparent; color: #fff; }
+
+    /* ── Week cards ── */
+    .weeks-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .week-card {
+      background: rgba(255,255,255,0.85);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .week-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+
+    .week-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      cursor: pointer;
+      background: rgba(240,252,244,0.9);
+      border-bottom: 1px solid rgba(108,187,132,0.2);
+      user-select: none;
+    }
+    .week-header:hover { background: rgba(220,248,228,0.9); }
+
+    .week-meta { display: flex; align-items: center; gap: 12px; }
+    .week-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+      background: rgba(76,155,96,0.85);
+      border-radius: 4px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+    .week-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: #2c3e50;
+    }
+    .week-block-badge {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      color: #5a7a5a;
+      font-style: italic;
+    }
+    .week-stats {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .week-stat {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      color: #5a7a5a;
+      text-align: right;
+    }
+    .week-stat strong { display: block; color: #2c7a4b; font-size: 0.85rem; }
+    .week-chevron {
+      font-size: 1rem;
+      color: #7aaa8a;
+      transition: transform 0.25s;
+      margin-left: 8px;
+    }
+    .week-card.open .week-chevron { transform: rotate(180deg); }
+
+    /* ── Day rows ── */
+    .week-days { display: none; padding: 0 10px 10px; }
+    .week-card.open .week-days { display: block; }
+
+    .day-row {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      align-items: start;
+      gap: 10px;
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+    .day-row:last-child { border-bottom: none; }
+    .day-row:hover .session-pill { filter: brightness(0.95); }
+
+    .day-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: #888;
+      padding-top: 4px;
+      white-space: nowrap;
+    }
+
+    .session-pill {
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      transition: filter 0.15s;
+    }
+    .session-pill .pill-name { font-weight: 500; }
+    .session-pill .pill-dist { font-size: 0.68rem; opacity: 0.75; }
+
+    /* Session type colours */
+    .s-rest     { background: #f0f0f0; color: #999; }
+    .s-strength { background: rgba(180,130,255,0.15); color: #6a3fa0; border-left: 3px solid #b482ff; }
+    .s-tempo    { background: rgba(255,165,0,0.12); color: #8a5500; border-left: 3px solid #ffa500; }
+    .s-technique{ background: rgba(100,180,255,0.15); color: #1a5a8a; border-left: 3px solid #64b4ff; }
+    .s-endurance{ background: rgba(76,187,132,0.15); color: #1a6a40; border-left: 3px solid #4cbb84; }
+    .s-ow       { background: rgba(30,144,255,0.12); color: #0a3a7a; border-left: 3px solid #1e90ff; }
+    .s-taper    { background: rgba(255,215,0,0.15); color: #7a6000; border-left: 3px solid #ffd700; }
+    .s-race     { background: rgba(220,50,50,0.12); color: #7a0a0a; border-left: 3px solid #dc3232; }
+    .s-admin    { background: rgba(200,200,200,0.2); color: #555; border-left: 3px solid #aaa; }
+
+    .session-dur {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      color: #888;
+      white-space: nowrap;
+      padding-top: 6px;
+    }
+
+    /* ── Session detail modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      max-width: 540px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      padding: 28px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #aaa;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+    .modal-close:hover { color: #555; }
+    .modal-tag {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .modal-box h3 {
+      font-family: 'Playfair Display', serif;
+      margin: 0 0 14px;
+      font-size: 1.25rem;
+      color: #2c3e50;
+    }
+    .modal-box pre {
+      background: rgba(240,252,244,0.8);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 0.8rem;
+      font-family: 'Lato', 'Montserrat', sans-serif;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #2c3e50;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .modal-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .modal-meta span {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: #5a7a5a;
+    }
+    .modal-meta strong { color: #2c7a4b; }
+
+    /* ── Race days section ── */
+    .race-section {
+      margin-top: 32px;
+      background: rgba(220,50,50,0.05);
+      border: 1px solid rgba(220,50,50,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .race-section-header {
+      background: rgba(220,50,50,0.1);
+      padding: 12px 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #7a0a0a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .race-stages { padding: 16px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .race-stage-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px;
+      border-left: 4px solid #dc3232;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .race-stage-card .stage-date { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: #888; margin-bottom: 4px; }
+    .race-stage-card .stage-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: #2c3e50; margin-bottom: 6px; }
+    .race-stage-card .stage-dist { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 600; color: #dc3232; }
+    .race-stage-card .stage-time { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #888; }
+    .race-stage-card .stage-gels { font-family: 'Montserrat', sans-serif; font-size: 0.72rem; color: #5a7a5a; margin-top: 4px; }
+
+    /* ── Volume chart ── */
+    .vol-section { margin-top: 28px; }
+    .vol-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #2c3e50;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .vol-bars { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+    .vol-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .vol-bar {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      background: rgba(76,187,132,0.6);
+      transition: background 0.2s;
+      cursor: pointer;
+      min-height: 4px;
+    }
+    .vol-bar:hover { background: rgba(76,187,132,0.9); }
+    .vol-bar.current-week { background: rgba(255,165,0,0.7); }
+    .vol-bar.past-week { background: rgba(76,187,132,0.35); }
+    .vol-label { font-family: 'Montserrat', sans-serif; font-size: 0.55rem; color: #999; }
+
+    /* ── Progress indicator ── */
+    .progress-bar-wrap { margin: 16px 0 28px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      color: #5a7a5a;
+      margin-bottom: 6px;
+    }
+    .progress-track {
+      height: 8px;
+      background: rgba(200,220,200,0.6);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(76,187,132,0.8), rgba(108,187,132,1));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    @media (max-width: 600px) {
+      .day-row { grid-template-columns: 72px 1fr; }
+      .session-dur { display: none; }
+      .week-stats { display: none; }
+      .cal-hero h2 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Andreia Otto</h1>
+    <p>Software Engineer • Dog Enthusiast • Global Citizen • Wellness Advocate • Finance Explorer</p>
+  </header>
+
+  <nav class="navbar" id="main-nav"></nav>
+
+  <div class="cal-page">
+    <div class="cal-hero">
+      <h2>UltraSwim 33.3 — Training Calendar</h2>
+      <p>Greece, Sep 18–21 2026 &nbsp;·&nbsp; 8km + 8km + 11km + 7km &nbsp;·&nbsp; 17 Weeks of Training</p>
+    </div>
+
+    <div id="countdown-banner">
+      <div class="cd-label">Days to Race Day</div>
+      <div class="cd-number" id="countdown-num">—</div>
+      <div class="cd-stages">Stage 1: Sep 18 &nbsp;|&nbsp; Stage 2: Sep 19 &nbsp;|&nbsp; Stage 3: Sep 20 &nbsp;|&nbsp; Stage 4: Sep 21</div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Training Progress</span>
+        <span id="progress-text">Week 1 of 17</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(180,130,255,0.4);border:2px solid #b482ff"></div>Strength</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,165,0,0.3);border:2px solid #ffa500"></div>Tempo Swim</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(100,180,255,0.3);border:2px solid #64b4ff"></div>Technique</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(76,187,132,0.3);border:2px solid #4cbb84"></div>Endurance</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(30,144,255,0.3);border:2px solid #1e90ff"></div>Open Water</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,215,0,0.3);border:2px solid #ffd700"></div>Taper</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0f0f0;border:2px solid #ccc"></div>Rest</div>
+    </div>
+
+    <div class="block-tabs" id="block-tabs">
+      <button class="block-tab all active" data-block="all">All Weeks</button>
+      <button class="block-tab" data-block="1">Block 1 — Establish (Wks 1–4)</button>
+      <button class="block-tab" data-block="2">Block 2 — Build (Wks 5–8)</button>
+      <button class="block-tab" data-block="3">Block 3 — Efficiency (Wks 9–12)</button>
+      <button class="block-tab" data-block="4">Block 4 — Bank Fitness (Wks 13–16)</button>
+      <button class="block-tab" data-block="taper">Taper &amp; Race</button>
+    </div>
+
+    <!-- Volume chart -->
+    <div class="vol-section">
+      <h3>Weekly Volume (metres)</h3>
+      <div class="vol-bars" id="vol-bars"></div>
+    </div>
+
+    <div class="weeks-grid" id="weeks-grid"></div>
+
+    <!-- Race section -->
+    <div class="race-section">
+      <div class="race-section-header">🏊 Race Days — Greece, September 2026</div>
+      <div class="race-stages">
+        <div class="race-stage-card">
+          <div class="stage-date">Fri Sep 18, 09:00</div>
+          <div class="stage-name">Stage 1</div>
+          <div class="stage-dist">8 km</div>
+          <div class="stage-time">Est. ~2h 18m</div>
+          <div class="stage-gels">Min. 3 gels · every ~45 min</div>
+        </div>
+        <div class="race-stage-card">
+          <div class="stage-date">Sat Sep 19, 09:00</div>
+          <div class="stage-name">Stage 2</div>
+          <div class="stage-dist">8 km</div>
+          <div class="stage-time">Est. ~2h 18m</div>
+          <div class="stage-gels">Min. 3 gels · every ~45 min</div>
+        </div>
+        <div class="race-stage-card" style="border-left-color:#1e90ff">
+          <div class="stage-date">Sun Sep 20, 09:00</div>
+          <div class="stage-name">Stage 3 ⚑ No drafting</div>
+          <div class="stage-dist">11 km</div>
+          <div class="stage-time">Est. ~3h 10m</div>
+          <div class="stage-gels">Min. 6 gels · every ~30 min</div>
+        </div>
+        <div class="race-stage-card">
+          <div class="stage-date">Mon Sep 21, 09:00</div>
+          <div class="stage-name">Stage 4</div>
+          <div class="stage-dist">7 km</div>
+          <div class="stage-time">Est. ~2h 00m</div>
+          <div class="stage-gels">Min. 2 gels · every ~60 min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-tag" id="modal-tag"></div>
+      <h3 id="modal-title"></h3>
+      <div class="modal-meta" id="modal-meta"></div>
+      <pre id="modal-body"></pre>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Andreia Otto. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts/script.js"></script>
+  <script src="scripts/home-nav.js"></script>
+  <script>
+  // ─── Training data ───────────────────────────────────────────────────────────
+  const WEEKS = [
+    {
+      num: 1, block: 1, label: "May 11 – May 17",
+      start: "2026-05-11",
+      days: [
+        { date: "Mon May 11", type: "strength", name: "Strength A — Core/Lower Back", dur: "45 min", dist: null,
+          detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue May 12", type: "tempo", name: "T1 — Tempo 16-20×100 Z3", dur: "80 min", dist: "~2500m",
+          detail: `TEMPO SWIM — T1\nLocation: Pool\n\n400m Warm-Up (200 easy + 100 drill + 100 build)\nMain Set: 16-20×100 Z3 (pace ~1:50-1:55/100m) RI:15s\n300m Cool-Down easy Z1\n\nTotal: ~2400-2700m | Duration: 75-85 min\nFocus: Sustained threshold pace, smooth stroke.` },
+        { date: "Wed May 13", type: "strength", name: "Strength B — Shoulders/Upper Body", dur: "45 min", dist: null,
+          detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu May 14", type: "technique", name: "Gary's Pyramid", dur: "75 min", dist: "~2250m",
+          detail: `TECHNIQUE — Gary's Pyramid\nLocation: Pool\n\n300m Warm-Up easy\nMain Set (Pyramid):\n  50 – 100 – 150 – 200 – 250 – 200 – 150 – 100 – 50\n  Z2-Z3 pace, RI:15s between each\n200m Cool-Down\n\nTotal: ~2250m | Duration: 70-80 min\nFocus: Pace variation, stroke awareness at different distances.` },
+        { date: "Fri May 15", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat May 16", type: "endurance", name: "E1 — 3×1200m Z2 Endurance", dur: "80 min", dist: "~3900m",
+          detail: `ENDURANCE SWIM — E1\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 3×1200m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~3900m | Duration: ~80 min\nFocus: Aerobic base, comfortable sustained pace.\nOW tips: sight every 10 strokes, relaxed breathing pattern.` },
+        { date: "Sun May 17", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 2, block: 1, label: "May 18 – May 24",
+      start: "2026-05-18",
+      days: [
+        { date: "Mon May 18", type: "strength", name: "Strength A — Core/Lower Back", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue May 19", type: "tempo", name: "T2 — Tempo 8-10×200 Z3", dur: "85 min", dist: "~2500m",
+          detail: `TEMPO SWIM — T2\nLocation: Pool\n\n400m Warm-Up (200 easy + 100 drill + 100 build)\nMain Set: 8-10×200 Z3 (pace ~1:50-1:55/100m) RI:20s\n300m Cool-Down easy Z1\n\nTotal: ~2500m | Duration: 80-90 min\nFocus: Lactate threshold, consistent splits across all 200s.` },
+        { date: "Wed May 20", type: "strength", name: "Strength B — Shoulders/Upper Body", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu May 21", type: "technique", name: "Lionel Sanders Ladder", dur: "80 min", dist: "~2400m",
+          detail: `TECHNIQUE — Lionel Sanders Ladder\nLocation: Pool\n\n300m Warm-Up easy\nMain Set (Descending Ladder):\n  600 – 500 – 400 – 300 – 200 – 100\n  Descend pace each rep: start Z2, finish at Z4\n  RI: 20s between each\n200m Cool-Down\n\nTotal: ~2400m | Duration: 75-85 min\nFocus: Negative split training, controlled speed increase.` },
+        { date: "Fri May 22", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat May 23", type: "endurance", name: "E2 — 4×1000m Z2 Endurance", dur: "90 min", dist: "~4200m",
+          detail: `ENDURANCE SWIM — E2\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 4×1000m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~4200m | Duration: ~90 min\nFocus: Build aerobic volume, maintain stroke efficiency when tired.\nOW tips: Practice sighting + drafting during reps.` },
+        { date: "Sun May 24", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 3, block: 1, label: "May 25 – May 31",
+      start: "2026-05-25",
+      days: [
+        { date: "Mon May 25", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue May 26", type: "tempo", name: "T1 — Tempo 16-20×100 Z3", dur: "80 min", dist: "~2500m", detail: `TEMPO SWIM — T1\nLocation: Pool\n\n400m Warm-Up (200 easy + 100 drill + 100 build)\nMain Set: 16-20×100 Z3 (pace ~1:50-1:55/100m) RI:15s\n300m Cool-Down easy Z1\n\nTotal: ~2400-2700m | Duration: 75-85 min\nFocus: Sustained threshold pace, smooth stroke.` },
+        { date: "Wed May 27", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu May 28", type: "technique", name: "Nicolas Remires 400-300-200-100", dur: "87 min", dist: "~3500m",
+          detail: `TECHNIQUE — Nicolas Remires Set\nLocation: Pool\n\n300m Warm-Up easy\nMain Set (repeat 3x):\n  400m Z2\n  300m Z3\n  200m Z3+\n  100m Z4\n  RI: 20s between reps, 45s between rounds\n200m Cool-Down\n\nTotal: ~3500m | Duration: 85-90 min\nFocus: Descending distance + ascending pace, lactate tolerance.` },
+        { date: "Fri May 29", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat May 30", type: "endurance", name: "E1 — 3×1200m Z2 Endurance", dur: "80 min", dist: "~3900m", detail: `ENDURANCE SWIM — E1\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 3×1200m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~3900m | Duration: ~80 min\nFocus: Aerobic base, comfortable sustained pace.\nOW tips: sight every 10 strokes, relaxed breathing pattern.` },
+        { date: "Sun May 31", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 4, block: 1, label: "Jun 01 – Jun 07",
+      start: "2026-06-01",
+      days: [
+        { date: "Mon Jun 01", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jun 02", type: "tempo", name: "T2 — Tempo 8-10×200 Z3", dur: "85 min", dist: "~2500m", detail: `TEMPO SWIM — T2\nLocation: Pool\n\n400m Warm-Up (200 easy + 100 drill + 100 build)\nMain Set: 8-10×200 Z3 (pace ~1:50-1:55/100m) RI:20s\n300m Cool-Down easy Z1\n\nTotal: ~2500m | Duration: 80-90 min\nFocus: Lactate threshold, consistent splits across all 200s.` },
+        { date: "Wed Jun 03", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jun 04", type: "technique", name: "Åsa CSS 4-Part Set", dur: "85 min", dist: "~2800m",
+          detail: `TECHNIQUE — Åsa CSS 4-Part Set\nLocation: Pool\n\n300m Warm-Up easy\nMain Set:\n  Part 1: 4×100m at CSS pace (1:43/100m) RI:10s\n  Part 2: 4×200m at CSS pace RI:15s\n  Part 3: 4×100m at CSS-2s RI:10s\n  Part 4: 2×400m at CSS pace RI:30s\n200m Cool-Down\n\nTotal: ~2800m | Duration: 80-90 min\nFocus: Critical Swim Speed control, pace accuracy.` },
+        { date: "Fri Jun 05", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jun 06", type: "endurance", name: "E2 — 4×1000m Z2 Endurance", dur: "90 min", dist: "~4200m", detail: `ENDURANCE SWIM — E2\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 4×1000m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~4200m | Duration: ~90 min\nFocus: Build aerobic volume, maintain stroke efficiency when tired.\nOW tips: Practice sighting + drafting during reps.` },
+        { date: "Sun Jun 07", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 5, block: 2, label: "Jun 08 – Jun 14",
+      start: "2026-06-08",
+      days: [
+        { date: "Mon Jun 08", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jun 09", type: "tempo", name: "T3 — Combo Z3/Z4 Blocks", dur: "95 min", dist: "~3000m",
+          detail: `TEMPO SWIM — T3\nLocation: Pool\n\n400m Warm-Up\nMain Set: 3-5 rounds of:\n  200m Z3 (pace ~1:52/100m)\n  2×100m Z3 RI:15s\n  4×50m Z4 (pace ~1:44/100m) RI:15s\nRI between rounds: 30s\n300m Cool-Down easy Z1\n\nTotal: ~2800-3200m | Duration: 90-100 min\nFocus: Shift between threshold and VO2Max pace, speed endurance.` },
+        { date: "Wed Jun 10", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jun 11", type: "technique", name: "Tomas Granberg Red Mist", dur: "80 min", dist: "~2700m",
+          detail: `TECHNIQUE — Tomas Granberg Red Mist\nLocation: Pool\n\n300m Warm-Up easy\nMain Set:\n  8×100m build (odd = Z3, even = Z4) RI:15s\n  4×50m max effort RI:30s\n  4×200m Z3 descend RI:20s\n  4×50m max effort RI:30s\n200m Cool-Down\n\nTotal: ~2700m | Duration: 75-85 min\nFocus: High-intensity capacity, tolerance to lactate, sprint speed.` },
+        { date: "Fri Jun 12", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jun 13", type: "endurance", name: "E3 — 3×1600m Z2 Endurance", dur: "110 min", dist: "~5100m",
+          detail: `ENDURANCE SWIM — E3\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 3×1600m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~5100m | Duration: ~110 min\nFocus: Extended aerobic efforts, mental resilience.\nFueling: 1 gel at 45 min mark if >90 min total.` },
+        { date: "Sun Jun 14", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 6, block: 2, label: "Jun 15 – Jun 21",
+      start: "2026-06-15",
+      days: [
+        { date: "Mon Jun 15", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jun 16", type: "tempo", name: "T4 — Progressive 6-8×400 Z2→Z4", dur: "100 min", dist: "~3300m",
+          detail: `TEMPO SWIM — T4\nLocation: Pool\n\n400m Warm-Up\nMain Set: 6-8×400m progressive (first rep Z2, final rep Z4)\n  Rep 1-2: Z2 (~2:00/100m)\n  Rep 3-4: Z3 (~1:52/100m)\n  Rep 5-6: Z3+ (~1:48/100m)\n  Rep 7-8: Z4 (~1:44/100m)\nRI: 30s between reps\n300m Cool-Down easy Z1\n\nTotal: ~3300m | Duration: 95-105 min\nFocus: Progressive overload, learn to sustain pace under fatigue.` },
+        { date: "Wed Jun 17", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jun 18", type: "technique", name: "Anders Nyberg Set", dur: "85 min", dist: "~2900m",
+          detail: `TECHNIQUE — Anders Nyberg\nLocation: Pool or OW\n\n300m Warm-Up easy\nMain Set:\n  3×(400m Z3 + 200m PULL Z2 + 4×50m Z4) RI:20s within, 45s between rounds\n200m Cool-Down\n\nTotal: ~2900m | Duration: 80-90 min\nFocus: Sustained threshold with pull efficiency and speed bursts.` },
+        { date: "Fri Jun 19", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jun 20", type: "endurance", name: "E4 — 5×1000m Z2 Endurance", dur: "115 min", dist: "~5300m",
+          detail: `ENDURANCE SWIM — E4\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 5×1000m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~5300m | Duration: ~115 min\nFocus: High aerobic volume, relaxed efficiency.\nFueling: 1 gel at start + 1 gel at 60 min.` },
+        { date: "Sun Jun 21", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 7, block: 2, label: "Jun 22 – Jun 28",
+      start: "2026-06-22",
+      days: [
+        { date: "Mon Jun 22", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jun 23", type: "tempo", name: "T3 — Combo Z3/Z4 Blocks", dur: "95 min", dist: "~3000m", detail: `TEMPO SWIM — T3\nLocation: Pool\n\n400m Warm-Up\nMain Set: 3-5 rounds of:\n  200m Z3 (pace ~1:52/100m)\n  2×100m Z3 RI:15s\n  4×50m Z4 (pace ~1:44/100m) RI:15s\nRI between rounds: 30s\n300m Cool-Down easy Z1\n\nTotal: ~2800-3200m | Duration: 90-100 min\nFocus: Shift between threshold and VO2Max pace, speed endurance.` },
+        { date: "Wed Jun 24", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jun 25", type: "technique", name: "Tiphanie Despouy vVO2Max", dur: "75 min", dist: "~1900m",
+          detail: `TECHNIQUE — Tiphanie Despouy vVO2Max\nLocation: Pool\n\n400m Warm-Up easy + drills\nMain Set (vVO2Max intervals):\n  10×75m at Z4/Z5 with 45s rest\n  OR 8×100m at Z4 with 60s rest\n  Focus: max sustainable aerobic speed\n300m Cool-Down\n\nTotal: ~1900m | Duration: 70-80 min\nFocus: VO2Max development, turnover speed, top-end aerobic capacity.` },
+        { date: "Fri Jun 26", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jun 27", type: "endurance", name: "E3 — 3×1600m Z2 Endurance", dur: "110 min", dist: "~5100m", detail: `ENDURANCE SWIM — E3\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 3×1600m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~5100m | Duration: ~110 min\nFocus: Extended aerobic efforts, mental resilience.\nFueling: 1 gel at 45 min mark if >90 min total.` },
+        { date: "Sun Jun 28", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 8, block: 2, label: "Jun 29 – Jul 05",
+      start: "2026-06-29",
+      days: [
+        { date: "Mon Jun 29", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jun 30", type: "tempo", name: "T4 — Progressive 6-8×400 Z2→Z4", dur: "100 min", dist: "~3300m", detail: `TEMPO SWIM — T4\nLocation: Pool\n\n400m Warm-Up\nMain Set: 6-8×400m progressive (first rep Z2, final rep Z4)\n  Rep 1-2: Z2 (~2:00/100m)\n  Rep 3-4: Z3 (~1:52/100m)\n  Rep 5-6: Z3+ (~1:48/100m)\n  Rep 7-8: Z4 (~1:44/100m)\nRI: 30s between reps\n300m Cool-Down easy Z1\n\nTotal: ~3300m | Duration: 95-105 min\nFocus: Progressive overload, learn to sustain pace under fatigue.` },
+        { date: "Wed Jul 01", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jul 02", type: "technique", name: "Mark Turner Goldilocks", dur: "82 min", dist: "~2900m",
+          detail: `TECHNIQUE — Mark Turner Goldilocks\nLocation: Pool\n\n300m Warm-Up easy\nMain Set (find 'just right' pace):\n  400m too easy (Z1)\n  400m too hard (Z4)\n  400m just right (CSS / Z3)\n  Repeat 2x more, sharpening precision each round\n200m Cool-Down\n\nTotal: ~2900m | Duration: 80-85 min\nFocus: Proprioceptive pace awareness, dialing in CSS.` },
+        { date: "Fri Jul 03", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jul 04", type: "endurance", name: "E4 — 5×1000m Z2 Endurance", dur: "115 min", dist: "~5300m", detail: `ENDURANCE SWIM — E4\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 5×1000m Z2 (pace ~2:00/100m) RI:30s\nCool-Down: 5 min easy Z1\n\nTotal: ~5300m | Duration: ~115 min\nFocus: High aerobic volume, relaxed efficiency.\nFueling: 1 gel at start + 1 gel at 60 min.` },
+        { date: "Sun Jul 05", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 9, block: 3, label: "Jul 06 – Jul 12",
+      start: "2026-07-06",
+      days: [
+        { date: "Mon Jul 06", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jul 07", type: "tempo", name: "T5 — Pull + Freestyle Z3 Blocks", dur: "95 min", dist: "~3200m",
+          detail: `TEMPO SWIM — T5\nLocation: Pool\n\n400m Warm-Up (include pull buoy drills)\nMain Set: 3-5 rounds of:\n  2×200m PULL Z3 RI:20s\n  2×200m Freestyle Z3 RI:20s\nRI between rounds: 45s\n300m Cool-Down easy Z1\n\nTotal: ~2800-3600m | Duration: 90-100 min\nFocus: Pull efficiency, body position, high-elbow catch.` },
+        { date: "Wed Jul 08", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jul 09", type: "ow", name: "OW Skills Session", dur: "75 min", dist: "~2500m",
+          detail: `TECHNIQUE — Open Water Skills Session\nLocation: Open Water (lake/sea)\n\nWarm-Up: 10 min easy Z1\nSkills Drills:\n  1. Sighting — every 6, 8, 10 strokes (3×200m)\n  2. Turn buoy practice — tight turns (10 reps)\n  3. Standing start + dolphin dive (5 reps)\n  4. Drafting lines (3×300m with partner)\n  5. Feeding bottle hand-off (5 reps)\nEasy swim back Z1\n\nDuration: 70-80 min\nFocus: Race-specific skills, comfort in OW, nutrition practice.` },
+        { date: "Fri Jul 10", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jul 11", type: "endurance", name: "E5 — 5×1000m or 4×1500m Z2", dur: "120 min", dist: "~5300-6300m",
+          detail: `ENDURANCE SWIM — E5\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nOption A: 5×1000m Z2 RI:30s (~5300m)\nOption B: 4×1500m Z2 RI:30s (~6300m)\nChoose based on feel — choose B if energy is good.\nCool-Down: 5 min easy Z1\n\nDuration: ~110-130 min\nFocus: Efficiency block — stroke rate vs. DPS, pull buoy optional.\nFueling: Gel every 45 min.` },
+        { date: "Sun Jul 12", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 10, block: 3, label: "Jul 13 – Jul 19",
+      start: "2026-07-13",
+      days: [
+        { date: "Mon Jul 13", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jul 14", type: "tempo", name: "T6 — Volume Pyramid Z2/Z3/Z4", dur: "105 min", dist: "~4100m",
+          detail: `TEMPO SWIM — T6\nLocation: Pool\n\n400m Warm-Up\nMain Set:\n  2×500m Z2 (pace ~2:00/100m) RI:30s\n  4×400m Z3 (pace ~1:52/100m) RI:25s\n  6×200m Z4 (pace ~1:44/100m) RI:20s\n300m Cool-Down easy Z1\n\nTotal: ~4100m | Duration: 100-110 min\nFocus: High-volume aerobic/threshold mix, race-pace exposure.` },
+        { date: "Wed Jul 15", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jul 16", type: "technique", name: "Andy Donaldson Time Warp", dur: "80 min", dist: "~2500m",
+          detail: `TECHNIQUE — Andy Donaldson Time Warp\nLocation: Pool\n\n300m Warm-Up easy\nMain Set:\n  5×100m @ 1:45 on 2:00 send-off (note rest time)\n  5×100m @ 1:43 on 2:00 send-off\n  5×100m @ 1:41 on 2:00 send-off\n  5×100m pace choice — hold best sustainable\n200m Cool-Down\n\nTotal: ~2500m | Duration: 75-85 min\nFocus: Pace discipline, CSS accuracy, aerobic capacity.` },
+        { date: "Fri Jul 17", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jul 18", type: "endurance", name: "E6 — 6-7×1000m Z2 Stroke Rate", dur: "135 min", dist: "~6500m",
+          detail: `ENDURANCE SWIM — E6\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 6-7×1000m Z2 RI:30s\nEach rep: monitor stroke rate — aim for consistent SPL\nCool-Down: 5 min easy Z1\n\nTotal: ~6200-7200m | Duration: ~130-145 min\nFocus: Stroke rate awareness, efficiency under volume load.\nFueling: Gel at 0, 45, 90 min. Electrolytes throughout.` },
+        { date: "Sun Jul 19", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 11, block: 3, label: "Jul 20 – Jul 26",
+      start: "2026-07-20",
+      days: [
+        { date: "Mon Jul 20", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jul 21", type: "tempo", name: "T5 — Pull + Freestyle Z3 Blocks", dur: "95 min", dist: "~3200m", detail: `TEMPO SWIM — T5\nLocation: Pool\n\n400m Warm-Up (include pull buoy drills)\nMain Set: 3-5 rounds of:\n  2×200m PULL Z3 RI:20s\n  2×200m Freestyle Z3 RI:20s\nRI between rounds: 45s\n300m Cool-Down easy Z1\n\nTotal: ~2800-3600m | Duration: 90-100 min\nFocus: Pull efficiency, body position, high-elbow catch.` },
+        { date: "Wed Jul 22", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jul 23", type: "technique", name: "Marieke Blomme 3×1000", dur: "87 min", dist: "~3800m",
+          detail: `TECHNIQUE — Marieke Blomme 3×1000\nLocation: Pool or OW\n\n300m Warm-Up easy + drills\nMain Set:\n  3×1000m descending pace:\n    Rep 1: Z2 (2:00/100m)\n    Rep 2: Z3 (1:52/100m)\n    Rep 3: Z3+ (1:48/100m)\n  RI: 60s between reps\n200m Cool-Down\n\nTotal: ~3800m | Duration: 85-90 min\nFocus: Long rep descend, holding form at increasing effort.` },
+        { date: "Fri Jul 24", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Jul 25", type: "endurance", name: "E5 — 5×1000m or 4×1500m Z2", dur: "120 min", dist: "~5300-6300m", detail: `ENDURANCE SWIM — E5\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nOption A: 5×1000m Z2 RI:30s (~5300m)\nOption B: 4×1500m Z2 RI:30s (~6300m)\nChoose based on feel — choose B if energy is good.\nCool-Down: 5 min easy Z1\n\nDuration: ~110-130 min\nFocus: Efficiency block — stroke rate vs. DPS, pull buoy optional.\nFueling: Gel every 45 min.` },
+        { date: "Sun Jul 26", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 12, block: 3, label: "Jul 27 – Aug 02",
+      start: "2026-07-27",
+      days: [
+        { date: "Mon Jul 27", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Jul 28", type: "tempo", name: "T6 — Volume Pyramid Z2/Z3/Z4", dur: "105 min", dist: "~4100m", detail: `TEMPO SWIM — T6\nLocation: Pool\n\n400m Warm-Up\nMain Set:\n  2×500m Z2 (pace ~2:00/100m) RI:30s\n  4×400m Z3 (pace ~1:52/100m) RI:25s\n  6×200m Z4 (pace ~1:44/100m) RI:20s\n300m Cool-Down easy Z1\n\nTotal: ~4100m | Duration: 100-110 min\nFocus: High-volume aerobic/threshold mix, race-pace exposure.` },
+        { date: "Wed Jul 29", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Jul 30", type: "technique", name: "Hans Chrunak Pyramid", dur: "82 min", dist: "~2800m",
+          detail: `TECHNIQUE — Hans Chrunak Pyramid\nLocation: Pool\n\n300m Warm-Up easy\nMain Set:\n  100 – 200 – 300 – 400 – 500 – 400 – 300 – 200 – 100\n  Odd distances: Z3 | Even distances: Z2\n  RI: 15s between each leg\n200m Cool-Down\n\nTotal: ~2800m | Duration: 80-85 min\nFocus: Aerobic-threshold alternation, pace awareness through volume.` },
+        { date: "Fri Jul 31", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Aug 01", type: "endurance", name: "E6 — 6-7×1000m Z2 Stroke Rate", dur: "135 min", dist: "~6500m", detail: `ENDURANCE SWIM — E6\nLocation: Open Water preferred / Pool\n\nWarm-Up: 10 min easy Z1\nMain Set: 6-7×1000m Z2 RI:30s\nEach rep: monitor stroke rate — aim for consistent SPL\nCool-Down: 5 min easy Z1\n\nTotal: ~6200-7200m | Duration: ~130-145 min\nFocus: Stroke rate awareness, efficiency under volume load.\nFueling: Gel at 0, 45, 90 min. Electrolytes throughout.` },
+        { date: "Sun Aug 02", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 13, block: 4, label: "Aug 03 – Aug 09",
+      start: "2026-08-03",
+      days: [
+        { date: "Mon Aug 03", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Aug 04", type: "tempo", name: "T7 — 5-6×800 Mixed Z3/Z4", dur: "115 min", dist: "~5500m",
+          detail: `TEMPO SWIM — T7\nLocation: Pool\n\n400m Warm-Up\nMain Set: 5-6×800m as:\n  400m PULL Z3\n  2×100m Z3 RI:10s\n  4×50m Z4 RI:10s\nRI between reps: 45s\n300m Cool-Down easy Z1\n\nTotal: ~5200-6000m | Duration: 110-120 min\nFocus: Race-specific fitness — combine pull strength + open-water speed.` },
+        { date: "Wed Aug 05", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Aug 06", type: "ow", name: "OW Race Skills", dur: "85 min", dist: "~3000m",
+          detail: `TECHNIQUE — Open Water Race Skills\nLocation: Open Water — REQUIRED\n\nWarm-Up: 10 min easy Z1\nRace-Simulation Drills:\n  1. Mass start practice (3 reps)\n  2. 500m at race effort Z3 from dead start\n  3. Buoy turns under pressure (10 reps)\n  4. Sprint finish — last 100m at Z5 (3 reps)\n  5. Full nutrition protocol practice (3×500m with gel)\nCool-Down: 10 min easy\n\nDuration: 80-90 min\nFocus: Race readiness, eliminating surprises, confidence in conditions.` },
+        { date: "Fri Aug 07", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Aug 08", type: "endurance", name: "E7 — 4-6×1500m or 7-8km Continuous", dur: "160 min", dist: "~7000-8000m",
+          detail: `ENDURANCE SWIM — E7\nLocation: Open Water — REQUIRED\n\nWarm-Up: 10 min easy Z1\nOption A: 4-6×1500m Z2 RI:30s\nOption B: 7-8km continuous Z2 (race simulation)\nChoose B when conditions allow — simulate Stage 1/2.\nCool-Down: 5 min easy Z1\n\nDuration: ~150-170 min\nFocus: Race-distance rehearsal, fueling practice.\nFueling: Full race nutrition protocol — gel every 45 min.\nPractice: feeder bottle hand-off from support.` },
+        { date: "Sun Aug 09", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 14, block: 4, label: "Aug 10 – Aug 16",
+      start: "2026-08-10",
+      days: [
+        { date: "Mon Aug 10", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Aug 11", type: "tempo", name: "T8 — 10×400 Z2→Z4 Ladder", dur: "115 min", dist: "~4800m",
+          detail: `TEMPO SWIM — T8\nLocation: Pool\n\n400m Warm-Up\nMain Set: 10×400m\n  Reps 1-3: Z2 (~2:00/100m)\n  Reps 4-6: Z3 (~1:52/100m)\n  Reps 7-8: Z3+ (~1:48/100m)\n  Reps 9-10: Z4 (~1:44/100m)\nRI: 30s between reps\n400m Cool-Down easy Z1\n\nTotal: ~4800m | Duration: 110-120 min\nFocus: Peak fitness — handle volume at race pace, mental toughness.` },
+        { date: "Wed Aug 12", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Aug 13", type: "technique", name: "Tiphanie Despouy 500s Session", dur: "105 min", dist: "~4700m",
+          detail: `TECHNIQUE — Tiphanie Despouy 500s Session\nLocation: Pool\n\n400m Warm-Up easy + drills\nMain Set:\n  8×500m — alternating:\n    Odd: Z3 (1:52/100m) RI:30s\n    Even: Z2 (2:00/100m) RI:30s\n300m Cool-Down\n\nTotal: ~4700m | Duration: 100-110 min\nFocus: Sustained aerobic-threshold blend, race-specific endurance.` },
+        { date: "Fri Aug 14", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Aug 15", type: "endurance", name: "E8 — 7-10×1000m Z2 Draft Practice", dur: "165 min", dist: "~8500m",
+          detail: `ENDURANCE SWIM — E8\nLocation: Open Water — REQUIRED\n\nWarm-Up: 10 min easy Z1\nMain Set: 7-10×1000m Z2 RI:30s\nEvery other rep: practice drafting on a partner / buoy\nCool-Down: 5 min easy Z1\n\nTotal: ~7500-10500m | Duration: ~150-180 min\nFocus: Peak volume, draft technique, mental durability.\nNote: Captain Webb MSF Stage 3 = NO DRAFTING in race.\nFueling: Full race protocol. Electrolytes every 30 min.` },
+        { date: "Sun Aug 16", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 15, block: 4, label: "Aug 17 – Aug 23",
+      start: "2026-08-17",
+      days: [
+        { date: "Mon Aug 17", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Aug 18", type: "tempo", name: "T7 — 5-6×800 Mixed Z3/Z4", dur: "115 min", dist: "~5500m", detail: `TEMPO SWIM — T7\nLocation: Pool\n\n400m Warm-Up\nMain Set: 5-6×800m as:\n  400m PULL Z3\n  2×100m Z3 RI:10s\n  4×50m Z4 RI:10s\nRI between reps: 45s\n300m Cool-Down easy Z1\n\nTotal: ~5200-6000m | Duration: 110-120 min\nFocus: Race-specific fitness — combine pull strength + open-water speed.` },
+        { date: "Wed Aug 19", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Aug 20", type: "technique", name: "Anders Nyberg 5400m", dur: "105 min", dist: "~5900m",
+          detail: `TECHNIQUE — Anders Nyberg 5400m\nLocation: Pool\n\n300m Warm-Up\nMain Set (5400m total):\n  4×(300m Z3 + 300m PULL Z2 + 6×50m Z4) RI:20s within, 60s between rounds\n200m Cool-Down\n\nTotal: ~5900m | Duration: 100-110 min\nFocus: High-volume threshold with pull and sprint overlays.` },
+        { date: "Fri Aug 21", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Aug 22", type: "endurance", name: "E7 — 4-6×1500m or 7-8km Continuous", dur: "160 min", dist: "~7000-8000m", detail: `ENDURANCE SWIM — E7\nLocation: Open Water — REQUIRED\n\nWarm-Up: 10 min easy Z1\nOption A: 4-6×1500m Z2 RI:30s\nOption B: 7-8km continuous Z2 (race simulation)\nChoose B when conditions allow — simulate Stage 1/2.\nCool-Down: 5 min easy Z1\n\nDuration: ~150-170 min\nFocus: Race-distance rehearsal, fueling practice.\nFueling: Full race nutrition protocol — gel every 45 min.\nPractice: feeder bottle hand-off from support.` },
+        { date: "Sun Aug 23", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 16, block: 4, label: "Aug 24 – Aug 30",
+      start: "2026-08-24",
+      days: [
+        { date: "Mon Aug 24", type: "strength", name: "Strength A", dur: "45 min", dist: null, detail: `Core & Lower Back — 45 min\n\n3×10 Bird-Dog\n3×10 Dead Bug\n3×10 McGill Curl-Up\n3×15 Glute Bridge\n3×12 Pallof Press (each side)\n3×10 Superman\n3×15 Banded Clam Shell` },
+        { date: "Tue Aug 25", type: "tempo", name: "T8 — 10×400 Z2→Z4 Ladder", dur: "115 min", dist: "~4800m", detail: `TEMPO SWIM — T8\nLocation: Pool\n\n400m Warm-Up\nMain Set: 10×400m\n  Reps 1-3: Z2 (~2:00/100m)\n  Reps 4-6: Z3 (~1:52/100m)\n  Reps 7-8: Z3+ (~1:48/100m)\n  Reps 9-10: Z4 (~1:44/100m)\nRI: 30s between reps\n400m Cool-Down easy Z1\n\nTotal: ~4800m | Duration: 110-120 min\nFocus: Peak fitness — handle volume at race pace, mental toughness.` },
+        { date: "Wed Aug 26", type: "strength", name: "Strength B", dur: "45 min", dist: null, detail: `Shoulders & Upper Body — 45 min\n\n3×15 Face Pulls\n3×15 Band External Rotation\n3×10 Lat Pulldown\n3×12 TRX Row\n3×10 Landmine Press (each arm)\n3×15 Band Pull-Apart\n2×10 DB Y-T-W` },
+        { date: "Thu Aug 27", type: "technique", name: "Brett Sutton Broken 500s / Spike Set", dur: "90 min", dist: "~3600m",
+          detail: `TECHNIQUE — Brett Sutton Broken 500s / Spike Set\nLocation: Pool\n\n400m Warm-Up easy\nMain Set:\n  5×500m 'broken' as 250+250 with 10s mid-rep rest\n    Aim: faster than continuous 500 pace (Z3+)\n  Spike Set: 6×50m max Z5 RI:60s\n300m Cool-Down\n\nTotal: ~3600m | Duration: 85-95 min\nFocus: Neuromuscular speed, broken-rep power, finishing kick.` },
+        { date: "Fri Aug 28", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+        { date: "Sat Aug 29", type: "endurance", name: "E8 — 7-10×1000m Z2 Draft Practice", dur: "165 min", dist: "~8500m", detail: `ENDURANCE SWIM — E8\nLocation: Open Water — REQUIRED\n\nWarm-Up: 10 min easy Z1\nMain Set: 7-10×1000m Z2 RI:30s\nEvery other rep: practice drafting on a partner / buoy\nCool-Down: 5 min easy Z1\n\nTotal: ~7500-10500m | Duration: ~150-180 min\nFocus: Peak volume, draft technique, mental durability.\nFueling: Full race protocol. Electrolytes every 30 min.` },
+        { date: "Sun Aug 30", type: "rest", name: "REST", dur: "—", dist: null, detail: null },
+      ]
+    },
+    {
+      num: 17, block: "taper", label: "Aug 31 – Sep 06 (Taper)",
+      start: "2026-08-31",
+      days: [
+        { date: "Mon Aug 31", type: "taper", name: "Light Mobility / Activation", dur: "30 min", dist: null,
+          detail: `Light Mobility & Activation\n30 min\n\nGentle movement prep, no swim load.\nFocus: loosen up, activate key muscle groups, mental reset.` },
+        { date: "Tue Sep 01", type: "taper", name: "Taper Sharpener Pool ~2000m", dur: "45 min", dist: "~2000m",
+          detail: `Taper Sharpener\n\n400m WU easy\n8×100m Z3 RI:20s\n400m CD easy\n\nTotal ~2000m, 45 min\nFocus: Keep the feel for the water without accumulating fatigue.` },
+        { date: "Wed Sep 02", type: "admin", name: "ADMIN — Submit Swimmer Info Form", dur: "—", dist: null,
+          detail: `Admin Deadline: Submit Swimmer Info Form\nDeadline: ~Sep 3, 2026\n\nAlso check:\n- Medical certificate / insurance\n- Equipment: wetsuit, 2x goggles, silicone cap, nutrition board, feeder bottle` },
+        { date: "Thu Sep 03", type: "taper", name: "Easy Technique Swim 1500m Z1-Z2", dur: "40 min", dist: "~1500m",
+          detail: `Easy Technique Swim\n\n1500m Z1-Z2 only\nFocus on stroke quality, no effort above Z2.\n40 min.` },
+        { date: "Fri Sep 04", type: "rest", name: "REST / Travel prep", dur: "—", dist: null, detail: null },
+        { date: "Sat Sep 05", type: "taper", name: "Pre-Travel Sharpener ~1500m", dur: "35 min", dist: "~1500m",
+          detail: `Pre-Travel Sharpener\n\n200m WU\n4×100m build Z2→Z3\n6×50m Z3\n200m CD\n~1500m, 35 min` },
+        { date: "Sun Sep 06", type: "rest", name: "REST / Travel day", dur: "—", dist: null, detail: null },
+      ]
+    },
+  ];
+
+  const TYPE_LABELS = {
+    strength: "Strength", tempo: "Tempo Swim", technique: "Technique",
+    endurance: "Endurance", ow: "Open Water", taper: "Taper", rest: "Rest",
+    race: "Race", admin: "Admin"
+  };
+  const TYPE_COLORS = {
+    strength: "#6a3fa0", tempo: "#8a5500", technique: "#1a5a8a",
+    endurance: "#1a6a40", ow: "#0a3a7a", taper: "#7a6000", rest: "#999",
+    race: "#7a0a0a", admin: "#555"
+  };
+  const TYPE_BG = {
+    strength: "#6a3fa0", tempo: "#ffa500", technique: "#64b4ff",
+    endurance: "#4cbb84", ow: "#1e90ff", taper: "#ffd700", rest: "#ccc",
+    race: "#dc3232", admin: "#aaa"
+  };
+
+  // ── Volume by week (swim metres only, exclude strength/rest/admin) ──────────
+  function weekVolume(week) {
+    let v = 0;
+    for (const d of week.days) {
+      if (d.dist && d.dist !== "—") {
+        const m = d.dist.match(/[\d]+/g);
+        if (m) v += parseInt(m[0], 10);
+      }
+    }
+    return v;
+  }
+
+  // ── Countdown ──────────────────────────────────────────────────────────────
+  function updateCountdown() {
+    const race = new Date("2026-09-18T09:00:00");
+    const now = new Date();
+    const diff = Math.ceil((race - now) / 86400000);
+    const el = document.getElementById("countdown-num");
+    if (diff > 0) el.textContent = diff;
+    else if (diff === 0) el.textContent = "RACE DAY!";
+    else el.textContent = "Done!";
+  }
+
+  // ── Progress ───────────────────────────────────────────────────────────────
+  function updateProgress() {
+    const today = new Date();
+    const planStart = new Date("2026-05-11");
+    const planEnd = new Date("2026-09-06");
+    const total = planEnd - planStart;
+    const elapsed = today - planStart;
+    const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
+    // find current week
+    let currentWeek = 0;
+    for (let i = 0; i < WEEKS.length; i++) {
+      const ws = new Date(WEEKS[i].start);
+      const we = new Date(ws.getTime() + 7 * 86400000);
+      if (today >= ws && today < we) { currentWeek = i + 1; break; }
+    }
+    if (today > planEnd) currentWeek = 17;
+
+    document.getElementById("progress-fill").style.width = pct + "%";
+    document.getElementById("progress-text").textContent =
+      currentWeek > 0 ? `Week ${currentWeek} of 17` : "Starting May 11";
+  }
+
+  // ── Render volume bars ────────────────────────────────────────────────────
+  function renderVolBars() {
+    const today = new Date();
+    const container = document.getElementById("vol-bars");
+    const maxV = Math.max(...WEEKS.map(weekVolume));
+    container.innerHTML = WEEKS.map((w, i) => {
+      const v = weekVolume(w);
+      const h = maxV > 0 ? Math.round((v / maxV) * 76) : 0;
+      const ws = new Date(w.start);
+      const we = new Date(ws.getTime() + 7 * 86400000);
+      const isCurrent = today >= ws && today < we;
+      const isPast = today > we;
+      const cls = isCurrent ? "vol-bar current-week" : isPast ? "vol-bar past-week" : "vol-bar";
+      return `<div class="vol-bar-wrap" title="Wk ${w.num}: ${v.toLocaleString()}m">
+        <div class="${cls}" style="height:${h}px" data-week="${i}"></div>
+        <div class="vol-label">${w.num}</div>
+      </div>`;
+    }).join("");
+
+    // click bar → scroll to week
+    container.querySelectorAll(".vol-bar").forEach(bar => {
+      bar.addEventListener("click", () => {
+        const idx = parseInt(bar.dataset.week);
+        const card = document.querySelectorAll(".week-card")[idx];
+        if (card) { card.scrollIntoView({ behavior: "smooth", block: "start" }); openCard(card); }
+      });
+    });
+  }
+
+  // ── Render weeks ──────────────────────────────────────────────────────────
+  function openCard(card) {
+    card.classList.add("open");
+  }
+
+  function renderWeeks(filterBlock) {
+    const today = new Date();
+    const grid = document.getElementById("weeks-grid");
+    grid.innerHTML = "";
+
+    const filtered = filterBlock === "all" ? WEEKS :
+      filterBlock === "taper" ? WEEKS.filter(w => w.block === "taper") :
+      WEEKS.filter(w => w.block === parseInt(filterBlock));
+
+    for (const week of filtered) {
+      const vol = weekVolume(week);
+      const swimDays = week.days.filter(d => d.dist && d.dist !== "—").length;
+      const ws = new Date(week.start);
+      const we = new Date(ws.getTime() + 7 * 86400000);
+      const isCurrent = today >= ws && today < we;
+
+      const blockLabel = week.block === "taper" ? "Taper Week" :
+        ["","Establish","Build","Efficiency","Bank Fitness"][week.block];
+
+      const card = document.createElement("div");
+      card.className = "week-card" + (isCurrent ? " open" : "");
+      card.dataset.blockVal = week.block;
+
+      card.innerHTML = `
+        <div class="week-header">
+          <div class="week-meta">
+            <span class="week-num">${week.block === "taper" ? "TAPER" : "WEEK " + week.num}</span>
+            <span class="week-title">${week.label}</span>
+            <span class="week-block-badge">${blockLabel}</span>
+            ${isCurrent ? '<span style="font-family:Montserrat,sans-serif;font-size:0.68rem;background:rgba(255,165,0,0.2);border-radius:4px;padding:2px 8px;color:#8a5500;">Current</span>' : ""}
+          </div>
+          <div class="week-stats">
+            <div class="week-stat"><strong>${vol > 0 ? vol.toLocaleString() + "m" : "—"}</strong>volume</div>
+            <div class="week-stat"><strong>${swimDays}</strong>swims</div>
+          </div>
+          <span class="week-chevron">▾</span>
+        </div>
+        <div class="week-days">
+          ${week.days.map(day => `
+            <div class="day-row" data-has-detail="${!!day.detail}" data-type="${day.type}" data-name="${day.name.replace(/"/g,'&quot;')}" data-dur="${day.dur}" data-dist="${day.dist || ''}" data-detail="${(day.detail || '').replace(/\n/g,'\\n').replace(/"/g,'&quot;')}">
+              <span class="day-label">${day.date}</span>
+              <span class="session-pill s-${day.type}">
+                <span class="pill-name">${day.name}</span>
+                ${day.dist ? `<span class="pill-dist"> · ${day.dist}</span>` : ""}
+              </span>
+              <span class="session-dur">${day.dur}</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      // Toggle open/close on header click
+      card.querySelector(".week-header").addEventListener("click", () => {
+        card.classList.toggle("open");
+      });
+
+      // Day row click → modal
+      card.querySelectorAll(".day-row").forEach(row => {
+        if (row.dataset.hasDetail === "true") {
+          row.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openModal(row.dataset);
+          });
+          row.style.cursor = "pointer";
+        }
+      });
+
+      grid.appendChild(card);
+    }
+  }
+
+  // ── Modal ─────────────────────────────────────────────────────────────────
+  function openModal(data) {
+    const type = data.type;
+    document.getElementById("modal-tag").textContent = TYPE_LABELS[type] || type;
+    document.getElementById("modal-tag").style.background = TYPE_BG[type] || "#aaa";
+    document.getElementById("modal-title").textContent = data.name.replace(/&quot;/g, '"');
+    document.getElementById("modal-meta").innerHTML = `
+      ${data.dur && data.dur !== "—" ? `<span><strong>${data.dur}</strong> duration</span>` : ""}
+      ${data.dist ? `<span><strong>${data.dist}</strong> distance</span>` : ""}
+    `;
+    document.getElementById("modal-body").textContent =
+      (data.detail || "").replace(/\\n/g, "\n").replace(/&quot;/g, '"');
+    document.getElementById("modal-overlay").classList.add("open");
+  }
+
+  function closeModal() {
+    document.getElementById("modal-overlay").classList.remove("open");
+  }
+
+  // ── Block tab filter ──────────────────────────────────────────────────────
+  document.getElementById("block-tabs").addEventListener("click", (e) => {
+    if (!e.target.classList.contains("block-tab")) return;
+    document.querySelectorAll(".block-tab").forEach(t => t.classList.remove("active"));
+    e.target.classList.add("active");
+    renderWeeks(e.target.dataset.block);
+  });
+
+  document.getElementById("modal-close").addEventListener("click", closeModal);
+  document.getElementById("modal-overlay").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("modal-overlay")) closeModal();
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  // ── Volume bar click scrolls to correct week even with block filter ───────
+  document.getElementById("vol-bars").addEventListener("click", (e) => {
+    const bar = e.target.closest(".vol-bar");
+    if (!bar) return;
+    // ensure "All" filter is active
+    document.querySelectorAll(".block-tab").forEach(t => t.classList.remove("active"));
+    document.querySelector('.block-tab[data-block="all"]').classList.add("active");
+    renderWeeks("all");
+    setTimeout(() => {
+      const cards = document.querySelectorAll(".week-card");
+      const idx = parseInt(bar.dataset.week);
+      if (cards[idx]) { cards[idx].scrollIntoView({ behavior: "smooth", block: "start" }); openCard(cards[idx]); }
+    }, 50);
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  updateCountdown();
+  updateProgress();
+  renderVolBars();
+  renderWeeks("all");
+  </script>
+</body>
+</html>

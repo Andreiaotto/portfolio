@@ -34,7 +34,7 @@ class ArticleManager {
             <a href="#" data-category="${categoryKey}">${category.displayName}</a>
             <ul class="dropdown-menu">
               ${category.articles.map(article => `
-                <li><a href="?category=${categoryKey}&article=${article.id}" data-category="${categoryKey}" data-article="${article.id}">${article.title}</a></li>
+                <li><a href="${article.directUrl ? `../${article.directUrl}` : `?category=${categoryKey}&article=${article.id}`}" ${article.directUrl ? '' : `data-category="${categoryKey}" data-article="${article.id}"`}>${article.title}</a></li>
               `).join('')}
             </ul>
           </li>
@@ -122,9 +122,8 @@ class ArticleManager {
       <ul>
         ${category.articles.map(article => `
           <li>
-            <a href="?category=${categoryKey}&article=${article.id}" 
-               data-category="${categoryKey}" 
-               data-article="${article.id}"
+            <a href="${article.directUrl ? `../${article.directUrl}` : `?category=${categoryKey}&article=${article.id}`}"
+               ${article.directUrl ? '' : `data-category="${categoryKey}" data-article="${article.id}"`}
                class="${article.id === currentArticleId ? 'current' : ''}"
                title="${article.description}">
               ${article.title}

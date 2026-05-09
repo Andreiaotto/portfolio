@@ -25,6 +25,12 @@
           "title": "Sailing",
           "filename": "sailing-adventures.html",
           "description": "Adventures on the water"
+        },
+        {
+          "id": "swimming-calendar",
+          "title": "Training Calendar",
+          "directUrl": "swimming-calendar.html",
+          "description": "UltraSwim 33.3 — 17-week interactive training calendar"
         }
       ]
     },

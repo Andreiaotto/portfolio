@@ -33,7 +33,7 @@ class HomeNavigation {
             <a href="#" data-category="${categoryKey}">${category.displayName}</a>
             <ul class="dropdown-menu">
               ${category.articles.map(article => `
-                <li><a href="article-template.html?category=${categoryKey}&article=${article.id}">${article.title}</a></li>
+                <li><a href="${article.directUrl ? article.directUrl : `article-template.html?category=${categoryKey}&article=${article.id}`}">${article.title}</a></li>
               `).join('')}
             </ul>
           </li>
