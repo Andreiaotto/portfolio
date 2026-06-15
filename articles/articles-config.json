@@ -54,7 +54,7 @@
           "id": "swimming-calendar",
           "title": "Training Calendar",
           "directUrl": "swimming-calendar.html",
-          "description": "UltraSwim 33.3 — 17-week interactive training calendar"
+          "description": "UltraSwim 33.3 \u2014 17-week interactive training calendar"
         }
       ]
     },
@@ -72,6 +72,12 @@
     "health": {
       "displayName": "Women's Health",
       "articles": [
+        {
+          "id": "health-digest-2026-06-15",
+          "title": "Women's Health & Nutrition Digest \u2014 2026-06-15",
+          "filename": "health-digest-2026-06-15.html",
+          "description": "Evidence-based research on women's health and nutrition for athletes"
+        },
         {
           "id": "health-digest-2026-05-04",
           "title": "Women's Health & Nutrition Digest \u2014 2026-05-04",
