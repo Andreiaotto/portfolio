@@ -27,6 +27,12 @@
       "displayName": "Sports",
       "articles": [
         {
+          "id": "sports-digest-2026-06-22",
+          "title": "Open Water Swimming & Sports Science Digest \u2014 2026-06-22",
+          "filename": "sports-digest-2026-06-22.html",
+          "description": "Latest insights on open water swimming, endurance training, and sports science research"
+        },
+        {
           "id": "sports-digest-2026-05-04",
           "title": "Open Water Swimming & Sports Science Digest \u2014 2026-05-04",
           "filename": "sports-digest-2026-05-04.html",
@@ -54,7 +60,7 @@
           "id": "swimming-calendar",
           "title": "Training Calendar",
           "directUrl": "swimming-calendar.html",
-          "description": "UltraSwim 33.3 — 17-week interactive training calendar"
+          "description": "UltraSwim 33.3 \u2014 17-week interactive training calendar"
         }
       ]
     },
