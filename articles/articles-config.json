@@ -4,6 +4,12 @@
       "displayName": "Technology",
       "articles": [
         {
+          "id": "technology-digest-2026-08-10",
+          "title": "SRE & Technology Digest \u2014 2026-08-10",
+          "filename": "technology-digest-2026-08-10.html",
+          "description": "Site Reliability Engineering practices, DevOps insights, and technical learnings"
+        },
+        {
           "id": "technology-digest-2026-05-04",
           "title": "SRE & Technology Digest \u2014 2026-05-04",
           "filename": "technology-digest-2026-05-04.html",
@@ -26,6 +32,12 @@
     "sports": {
       "displayName": "Sports",
       "articles": [
+        {
+          "id": "sports-digest-2026-08-10",
+          "title": "Open Water Swimming & Sports Science Digest \u2014 2026-08-10",
+          "filename": "sports-digest-2026-08-10.html",
+          "description": "Latest insights on open water swimming, endurance training, and sports science research"
+        },
         {
           "id": "sports-digest-2026-05-04",
           "title": "Open Water Swimming & Sports Science Digest \u2014 2026-05-04",
@@ -54,7 +66,7 @@
           "id": "swimming-calendar",
           "title": "Training Calendar",
           "directUrl": "swimming-calendar.html",
-          "description": "UltraSwim 33.3 — 17-week interactive training calendar"
+          "description": "UltraSwim 33.3 \u2014 17-week interactive training calendar"
         }
       ]
     },
@@ -72,6 +84,12 @@
     "health": {
       "displayName": "Women's Health",
       "articles": [
+        {
+          "id": "health-digest-2026-08-10",
+          "title": "Women's Health & Nutrition Digest \u2014 2026-08-10",
+          "filename": "health-digest-2026-08-10.html",
+          "description": "Evidence-based research on women's health and nutrition for athletes"
+        },
         {
           "id": "health-digest-2026-05-04",
           "title": "Women's Health & Nutrition Digest \u2014 2026-05-04",
